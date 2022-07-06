@@ -1,0 +1,128 @@
+---
+settings:
+  env:
+    RIAS_REGION: eu-de
+    RIAS_VERSION: 2022-07-05
+    THINK_TIME: 5s
+
+execution:
+- concurrency: 30
+  ramp-up: 1m
+  hold-for: 5m
+  scenario: vpc_test
+
+scenarios:
+  iam_auth:
+    data-sources:
+    - path: apikey.csv
+      variable-names: apikey
+      delimiter: ','
+    requests:
+    - url: https://iam.cloud.ibm.com/identity/token
+      method: POST
+      headers:
+        Content-Type: application/x-www-form-urlencoded
+        Accept: application/json
+      body:
+        grant_type: urn:ibm:params:oauth:grant-type:apikey
+        apikey: ${apikey}
+        response_type: cloud_iam
+      extract-jsonpath:
+        auth_token:
+          jsonpath: $.access_token
+      label: get_token
+      jsr223: props.put('auth_token', 'Bearer ' + vars.get('auth_token'))
+  vpc_public_instances:
+    requests:
+    - url: https://${RIAS_REGION}.iaas.cloud.ibm.com/v1/instances?version=${RIAS_VERSION}&generation=2
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        Authorization: ${__P(auth_token)}
+      label: get_public_instances
+      think-time: ${THINK_TIME}
+  vpc_private_instances:
+    requests:
+    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/instances?version=${RIAS_VERSION}&generation=2
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        Authorization: ${__P(auth_token)}
+      label: get_private_instances
+      think-time: ${THINK_TIME}
+  vpc_public_lbs:
+    requests:
+    - url: https://${RIAS_REGION}.iaas.cloud.ibm.com/v1/load_balancers?version=${RIAS_VERSION}&generation=2
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        Authorization: ${__P(auth_token)}
+      label: get_public_lbs
+      think-time: ${THINK_TIME}
+  vpc_private_lbs:
+    requests:
+    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/load_balancers?version=${RIAS_VERSION}&generation=2
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        Authorization: ${__P(auth_token)}
+      label: get_private_lbs
+      think-time: ${THINK_TIME}
+  vpc_test:
+    requests:
+    - if: ${__groovy(ctx.getThreadNum() == 0 && vars.getIteration() == 1,)}
+      then:
+      - include-scenario: iam_auth
+      else:
+      - include-scenario: vpc_public_instances
+
+
+
+  vpc_lists:
+    requests:
+    - if: ${__groovy(ctx.getThreadNum() == 0 && vars.getIteration() == 1,)}
+      then:
+      - include-scenario: iam_auth
+      else:
+      - url: https://${RIAS_REGION}.iaas.cloud.ibm.com/v1/instances?version=${RIAS_VERSION}
+        method: GET
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          Authorization: ${__P(auth_token)}
+        label: get_public_${RIAS_REGION}
+        think-time: ${THINK_TIME}
+  vpc_public_instance:
+    variables:
+      rias: ${RIAS_REGION}
+      endpoint: instances
+    requests:
+    - include-scenario: vpc_list
+  vpc_private_instance:
+    variables:
+      rias: private-${RIAS_REGION}
+      endpoint: instances
+    requests:
+    - include-scenario: vpc_list
+  vpc_public_lb:
+    variables:
+      rias: ${RIAS_REGION}
+      endpoint: load_balancers
+    requests:
+    - include-scenario: vpc_list
+  vpc_private_lb:
+    variables:
+      rias: private-${RIAS_REGION}
+      endpoint: load_balancers
+    requests:
+    - include-scenario: vpc_list
+  vpc_test:
+    requests:
+    - include-scenario: vpc_public_instance
+    - include-scenario: vpc_private_instance
+    - include-scenario: vpc_public_lb
+    - include-scenario: vpc_private_lb
