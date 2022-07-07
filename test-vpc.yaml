@@ -1,5 +1,6 @@
 ---
 settings:
+  artifacts-dir: ./artifacts/%Y-%m-%d_%H-%M-%S.%f
   env:
     RIAS_REGION: eu-de
     RIAS_VERSION: 2022-07-05
