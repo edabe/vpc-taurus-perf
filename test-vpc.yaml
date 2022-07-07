@@ -34,7 +34,7 @@ scenarios:
       jsr223: props.put('auth_token', 'Bearer ' + vars.get('auth_token'))
   vpc_public_instances:
     requests:
-    - url: https://${RIAS_REGION}.iaas.cloud.ibm.com/v1/instances?version=${RIAS_VERSION}&generation=2
+    - url: https://${RIAS_REGION}.iaas.cloud.ibm.com/v1/instances?version=${RIAS_VERSION}&generation=2&limit=99&sort=name
       method: GET
       headers:
         Content-Type: application/json
@@ -44,7 +44,7 @@ scenarios:
       think-time: ${THINK_TIME}
   vpc_private_instances:
     requests:
-    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/instances?version=${RIAS_VERSION}&generation=2
+    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/instances?version=${RIAS_VERSION}&generation=2&limit=99&sort=name
       method: GET
       headers:
         Content-Type: application/json
@@ -54,7 +54,7 @@ scenarios:
       think-time: ${THINK_TIME}
   vpc_public_lbs:
     requests:
-    - url: https://${RIAS_REGION}.iaas.cloud.ibm.com/v1/load_balancers?version=${RIAS_VERSION}&generation=2
+    - url: https://${RIAS_REGION}.iaas.cloud.ibm.com/v1/load_balancers?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
       method: GET
       headers:
         Content-Type: application/json
@@ -64,13 +64,53 @@ scenarios:
       think-time: ${THINK_TIME}
   vpc_private_lbs:
     requests:
-    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/load_balancers?version=${RIAS_VERSION}&generation=2
+    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/load_balancers?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
       method: GET
       headers:
         Content-Type: application/json
         Accept: application/json
         Authorization: ${__P(auth_token)}
       label: get_private_lbs
+      think-time: ${THINK_TIME}
+  vpc_public_images:
+    requests:
+    - url: https://${RIAS_REGION}.iaas.cloud.ibm.com/v1/images?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        Authorization: ${__P(auth_token)}
+      label: get_public_images
+      think-time: ${THINK_TIME}
+  vpc_private_images:
+    requests:
+    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/images?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        Authorization: ${__P(auth_token)}
+      label: get_private_images
+      think-time: ${THINK_TIME}
+  vpc_public_volumes:
+    requests:
+    - url: https://${RIAS_REGION}.iaas.cloud.ibm.com/v1/volumes?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        Authorization: ${__P(auth_token)}
+      label: get_public_volumes
+      think-time: ${THINK_TIME}
+  vpc_private_volumes:
+    requests:
+    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/volumes?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        Authorization: ${__P(auth_token)}
+      label: get_private_volumes
       think-time: ${THINK_TIME}
   vpc_test:
     requests:
@@ -82,3 +122,7 @@ scenarios:
       - include-scenario: vpc_private_instances
       - include-scenario: vpc_public_lbs
       - include-scenario: vpc_private_lbs
+      - include-scenario: vpc_public_images
+      - include-scenario: vpc_private_images
+      - include-scenario: vpc_public_volumes
+      - include-scenario: vpc_private_volumes
