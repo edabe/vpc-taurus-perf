@@ -6,7 +6,7 @@ settings:
     THINK_TIME: 5s
 
 execution:
-- concurrency: 30
+- concurrency: 50
   ramp-up: 1m
   hold-for: 5m
   scenario: vpc_test
@@ -112,6 +112,26 @@ scenarios:
         Authorization: ${__P(auth_token)}
       label: get_private_volumes
       think-time: ${THINK_TIME}
+  vpc_public_snapshots:
+    requests:
+    - url: https://${RIAS_REGION}.iaas.cloud.ibm.com/v1/snapshots?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        Authorization: ${__P(auth_token)}
+      label: get_public_snapshots
+      think-time: ${THINK_TIME}
+  vpc_private_snapshots:
+    requests:
+    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/snapshots?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
+      method: GET
+      headers:
+        Content-Type: application/json
+        Accept: application/json
+        Authorization: ${__P(auth_token)}
+      label: get_private_snapshots
+      think-time: ${THINK_TIME}
   vpc_test:
     requests:
     - if: ${__groovy(ctx.getThreadNum() == 0 && vars.getIteration() == 1,)}
@@ -126,3 +146,5 @@ scenarios:
       - include-scenario: vpc_private_images
       - include-scenario: vpc_public_volumes
       - include-scenario: vpc_private_volumes
+      - include-scenario: vpc_public_snapshots
+      - include-scenario: vpc_private_snapshots
