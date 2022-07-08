@@ -45,7 +45,7 @@ scenarios:
       think-time: ${THINK_TIME}
   vpc_private_instances:
     requests:
-    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/instances?version=${RIAS_VERSION}&generation=2&limit=99&sort=name
+    - url: https://${RIAS_REGION}.private.iaas.cloud.ibm.com/v1/instances?version=${RIAS_VERSION}&generation=2&limit=99&sort=name
       method: GET
       headers:
         Content-Type: application/json
@@ -65,7 +65,7 @@ scenarios:
       think-time: ${THINK_TIME}
   vpc_private_lbs:
     requests:
-    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/load_balancers?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
+    - url: https://${RIAS_REGION}.private.iaas.cloud.ibm.com/v1/load_balancers?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
       method: GET
       headers:
         Content-Type: application/json
@@ -85,7 +85,7 @@ scenarios:
       think-time: ${THINK_TIME}
   vpc_private_images:
     requests:
-    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/images?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
+    - url: https://${RIAS_REGION}.private.iaas.cloud.ibm.com/v1/images?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
       method: GET
       headers:
         Content-Type: application/json
@@ -105,7 +105,7 @@ scenarios:
       think-time: ${THINK_TIME}
   vpc_private_volumes:
     requests:
-    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/volumes?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
+    - url: https://${RIAS_REGION}.private.iaas.cloud.ibm.com/v1/volumes?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
       method: GET
       headers:
         Content-Type: application/json
@@ -125,7 +125,7 @@ scenarios:
       think-time: ${THINK_TIME}
   vpc_private_snapshots:
     requests:
-    - url: https://private-${RIAS_REGION}.iaas.cloud.ibm.com/v1/snapshots?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
+    - url: https://${RIAS_REGION}.private.iaas.cloud.ibm.com/v1/snapshots?version=${RIAS_VERSION}&generation=2&limit=99&sort=name'
       method: GET
       headers:
         Content-Type: application/json
